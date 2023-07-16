@@ -2,7 +2,7 @@
 
 #include <utility>
 
-node* list::GetNode(int index) {
+node* list::get_node(int index){
     node* cursor = this->head;
     for (int i = 0; i < index; ++i, cursor = cursor->next) {
         if (!cursor->next) {
@@ -11,8 +11,8 @@ node* list::GetNode(int index) {
     }
     return cursor;
 }
-int list::Insert(int index, string label, string content, int len) {
-    node* in_place_of = this->GetNode(index);
+int list::insert(int index, string label, string content, int len) {
+    node* in_place_of = this->get_node(index);
     if (!in_place_of) {
         return 1;
     }
@@ -29,6 +29,16 @@ int list::Insert(int index, string label, string content, int len) {
         this->tail = nnode;
     }
     return 0;
+}
+
+int list::get_length() {
+    node* cursor = this->head;
+    int len = 0;
+    while (cursor) {
+        len++;
+        cursor = cursor->next;
+    }
+    return len;
 }
 
 int list::push_back( string label, string content, int len) {
@@ -105,6 +115,40 @@ void list::decrypt() {
     }
 }
 
+void list::save_to_file(string filename) {
+    FILE* fp = fopen(filename.c_str(), "w");
+    node* cursor = this->head;
+    fprintf(fp, "%i\n", this->get_length());
+    while (cursor) {
+        fprintf(fp, "%i%s\n%s\n", cursor->GetLen(), cursor->GetLabel().c_str(), cursor->GetContent().c_str());
+        cursor = cursor->next;
+    }
+    fclose(fp);
+}
+
+int list::load_from_file(std::string filename) {
+    FILE* fp = fopen(filename.c_str(), "r");
+    if (!fp){
+        return 1;
+    }
+    int len;
+    int err = fscanf(fp, "%i", &len);
+    if (err != 1) {
+        return 2;
+    }
+    for (int i = 0; i < len; ++i) {
+        int entry_len;
+        char label[1024];
+        char content[256];
+        err = fscanf(fp, "%i%[^\n]\n%s", &entry_len, label, content);
+        if (err != 3) {
+            return 2;
+        }
+        this->push_back(label, content, entry_len);
+    }
+    return 0;
+}
+
 list::list(string password, int seed) {
     this->head = nullptr;
     this->password = std::move(password);
@@ -115,4 +159,22 @@ list::list(string password, int seed) {
 list::list() {
     this->head = nullptr;
     this->tail = nullptr;
+}
+
+list::list(string filename, string password, int seed) {
+    this->head = nullptr;
+    this->password = std::move(password);
+    this->seed = seed;
+    this->tail = nullptr;
+    load_from_file(std::move(filename));
+}
+
+list::~list() {
+    node* cursor = this->head;
+    while (cursor) {
+        if (!cursor->prev) {
+            delete cursor->prev;
+        }
+        cursor = cursor->next;
+    }
 }

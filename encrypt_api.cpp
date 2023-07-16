@@ -18,7 +18,7 @@ string encrypt(const unsigned char* plain, const char* pass, int seed) {
     }//Randomly create an initialization vector using <random> and set seed
 
     string s = string((char*)aes.EncryptCFB(plain, strlen((char*)plain), key, ev));//Now we use CFB encryption to encrypt the data
-
+    s[strlen((char*)plain)] = 0;
     delete key;
     return s;//Delete the allocated stuff and return the string
 }
@@ -49,9 +49,6 @@ char* Get_Encrypted_String(const string& label, const string& input, const strin
     std::stringstream astringstream;//Initialize the stringstream
 
     string encr = encrypt((const unsigned char*)input.c_str(), password.c_str(), seed);//Get an encrypted string
-
-    astringstream << label << '\n';//Add the couple of values to the stringstream
-
     for (int i = 0; i < encr.length(); ++i) {
         char hexString[10];
         char WHY = encr[i];
@@ -67,6 +64,7 @@ char* Get_Encrypted_String(const string& label, const string& input, const strin
 }
 
 int Hex_To_Char(const char* hex, char* expr) {
+    int i = 0;
     while(*hex&&*(hex+1)) {
         char n[3];
         strncpy(n, hex, 2);
@@ -78,18 +76,33 @@ int Hex_To_Char(const char* hex, char* expr) {
         }
         *expr = ni;
         expr++;
+        i++;
+        expr[i] = 0;
     }
     return 0;///Utility function for converting hex expression to a C string
 }
 
 string Get_Decrypted_String(int len, const char* label, const char* input, const char* pass, int seed) {//Here I guess I'll use C strings as it's easier to manupulate those
-    char *encr = (char*) calloc(strlen(input)/2 + 1, sizeof(char));//We don't know the size so I'm allocating in a way so that the capacity is 100% bigger than the things we will put there
+    char *encr = (char*) calloc(strlen(input), sizeof(char));//We don't know the size so I'm allocating in a way so that the capacity is 100% bigger than the things we will put there
+    if (!encr) {
+        return nullptr;
+    }
+    for (int i = 0; i < strlen(input); ++i) {
+        encr[i] = 0;
+    }
     Hex_To_Char(input, encr);//Make the encrypted data gibberish again
+
     string decr;
-    decr = decrypt(reinterpret_cast<const unsigned char *>(encr), pass, seed, len);
+    try {
+        decr = decrypt(reinterpret_cast<const unsigned char *>(encr), pass, seed, strlen(encr));
+    } catch (std::length_error) {
+        printf("%s", encr);
+        printf("%i", strlen(encr));
+
+    }
     decr[len] = 0;//Decrypt the string and crop it
 
-    free(encr);//Free the allocated memory
+    //free(encr);//Free the allocated memory
 
     return decr;
 }

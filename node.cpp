@@ -50,11 +50,7 @@ void node::Encrypt(const string& password, int seed) {
     if (ticks == 16) {
         throw std::logic_error("There is something weird with your text dude");
     }
-    char* label_alloc = (char*)calloc(ToProcess.length(), sizeof(char));
-    char* content_alloc = (char*)calloc(ToProcess.length(), sizeof(char));
-    sscanf(ToProcess.c_str(), "%[^\n]\n%s", label_alloc, content_alloc);
-    this->content = content_alloc;
-    free(label_alloc); free(content_alloc);
+    this->content = ToProcess;
 }
 
 void node::Decrypt(const string& password, int seed) {
