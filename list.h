@@ -4,6 +4,7 @@
 
 
 class list {
+public:
     node* head;
     node* tail;
     string password;
@@ -16,6 +17,8 @@ class list {
     node* pop_front();
     void encrypt();
     void decrypt();
+    list(string password, int seed);
+    list();
 };
 
 #endif

@@ -39,7 +39,7 @@ string decrypt(const unsigned char* cip, const char* pass, int seed, int len) {
         ev[i] = dist(gen);
     }//Randomly create an initialization vector using <random> and set seed
 
-    string s = string((char*)aes.DecryptCFB(cip, len, key, ev));//The function is basically the same thing but encrypts the data
+    string s = string((char*)aes.DecryptCFB(cip, strlen(reinterpret_cast<const char *>(cip)), key, ev));//The function is basically the same thing but encrypts the data
 
     delete key;
     return s;//Delete the allocated stuff and return the string

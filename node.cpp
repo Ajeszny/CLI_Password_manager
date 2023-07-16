@@ -36,7 +36,20 @@ node::node(std::string label, std::string content, int len) {
 }
 
 void node::Encrypt(const string& password, int seed) {
-    string ToProcess = Get_Encrypted_String(this->label, this->content, password, seed);
+    int ticks = 0;
+    string ToProcess;
+    while(ticks < 16) {
+        ticks++;
+        try {
+            ToProcess = Get_Encrypted_String(this->label, this->content, password, seed);
+            break;
+        } catch (std::length_error) {
+            this->content.push_back('.');
+        }
+    }
+    if (ticks == 16) {
+        throw std::logic_error("There is something weird with your text dude");
+    }
     char* label_alloc = (char*)calloc(ToProcess.length(), sizeof(char));
     char* content_alloc = (char*)calloc(ToProcess.length(), sizeof(char));
     sscanf(ToProcess.c_str(), "%[^\n]\n%s", label_alloc, content_alloc);

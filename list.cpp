@@ -104,3 +104,15 @@ void list::decrypt() {
         cursor = cursor->next;
     }
 }
+
+list::list(string password, int seed) {
+    this->head = nullptr;
+    this->password = std::move(password);
+    this->seed = seed;
+    this->tail = nullptr;
+}
+
+list::list() {
+    this->head = nullptr;
+    this->tail = nullptr;
+}
