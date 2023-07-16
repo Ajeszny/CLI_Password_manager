@@ -17,7 +17,7 @@ int list::Insert(int index, string label, string content, int len) {
         return 1;
     }
     node* prev = in_place_of->prev;
-    node* nnode = new node(label, content, len);
+    node* nnode = new node(std::move(label), std::move(content), len);
     nnode->prev = prev;
     nnode->next = in_place_of;
     in_place_of->prev = nnode;
@@ -42,6 +42,7 @@ int list::push_back( string label, string content, int len) {
     }
     n->prev = this->tail;
     this->tail = n;
+    return 0;
 }
 int list::push_front( string label, string content, int len) {
     node* n = new node(std::move(label), std::move(content), len);
@@ -54,6 +55,7 @@ int list::push_front( string label, string content, int len) {
     }
     n->next = this->head;
     this->head = n;
+    return 0;
 }
 node* list::pop_back() {
     node* retv = this->tail;
@@ -86,4 +88,19 @@ node* list::pop_front() {
         this->tail = nullptr;
     }
     return retv;
+}
+
+void list::encrypt() {
+    node* cursor = this->head;
+    while (cursor) {
+        cursor->Encrypt(this->password, this->seed);
+        cursor = cursor->next;
+    }
+}
+void list::decrypt() {
+    node* cursor = this->head;
+    while (cursor) {
+        cursor->Decrypt(this->password, this->seed);
+        cursor = cursor->next;
+    }
 }

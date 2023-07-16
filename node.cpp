@@ -35,13 +35,19 @@ node::node(std::string label, std::string content, int len) {
     this->next = nullptr;
 }
 
-void node::Encrypt(string password, int seed) {
+void node::Encrypt(const string& password, int seed) {
     string ToProcess = Get_Encrypted_String(this->label, this->content, password, seed);
     char* label_alloc = (char*)calloc(ToProcess.length(), sizeof(char));
     char* content_alloc = (char*)calloc(ToProcess.length(), sizeof(char));
-    char* kostyl = (char*)calloc(ToProcess.length(), sizeof(char));
     sscanf(ToProcess.c_str(), "%[^\n]\n%s", label_alloc, content_alloc);
-    this->label = label_alloc;
     this->content = content_alloc;
     free(label_alloc); free(content_alloc);
+}
+
+void node::Decrypt(const string& password, int seed) {
+    string processed = Get_Decrypted_String(this->len, this->label.c_str(), this->content.c_str(), password.c_str(), seed);
+    char* kostyl = (char*)calloc(this->len+1, sizeof(char));
+    strcpy(kostyl, processed.c_str());
+    this->content = kostyl;
+    free(kostyl);
 }

@@ -13,7 +13,8 @@ public:
     void SetContent(string content);
     int GetLen();
     void SetLen(int len);
-    void Encrypt(string password, int seed);
+    void Encrypt(const string& password, int seed);
+    void Decrypt(const string& password, int seed);
     node();
     node(string label, string content, int len);
 

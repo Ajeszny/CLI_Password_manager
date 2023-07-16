@@ -14,7 +14,8 @@ class list {
     int push_front( string label, string content, int len);
     node* pop_back();
     node* pop_front();
-
+    void encrypt();
+    void decrypt();
 };
 
 #endif
