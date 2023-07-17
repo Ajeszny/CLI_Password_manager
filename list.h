@@ -10,6 +10,7 @@ public:
     string password;
     int seed;
     node* get_node(int index);
+    string get_password(int index);
     int insert(int index, string label, string content, int len);
     int get_length();
     int push_back( string label, string content, int len);

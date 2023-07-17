@@ -11,6 +11,11 @@ node* list::get_node(int index){
     }
     return cursor;
 }
+
+string list::get_password(int index) {
+    return this->get_node(index)->GetDecrString(this->password, this->seed);
+}
+
 int list::insert(int index, string label, string content, int len) {
     node* in_place_of = this->get_node(index);
     if (!in_place_of) {
